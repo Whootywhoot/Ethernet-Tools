@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.ComponentModel;
 using System.Security.Principal;
+using System.Windows.Media;
 
 namespace Ethernet_Tools
 {
@@ -69,6 +70,7 @@ namespace Ethernet_Tools
 
             // Load Data
             LoadNetworkAdapters();
+            
             LoadSavedIPAddresses();
         }
 
@@ -76,35 +78,35 @@ namespace Ethernet_Tools
 
         private void MenuButton_Click(object sender, RoutedEventArgs e)
         {
-            OverlayMenu.Visibility = Visibility.Visible;
+            MenuOverlay.Visibility = Visibility.Visible;
         }
 
         private void CloseMenuButton_Click(object sender, RoutedEventArgs e)
         {
-            OverlayMenu.Visibility = Visibility.Collapsed;
+            MenuOverlay.Visibility = Visibility.Collapsed;
         }
 
         private void OverlayMenuBackground_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            OverlayMenu.Visibility = Visibility.Collapsed;
+            MenuOverlay.Visibility = Visibility.Collapsed;
         }
 
         private void EthernetToolsMenuItem_Click(object sender, RoutedEventArgs e)
         {
             ShowPage("EthernetTools");
-            OverlayMenu.Visibility = Visibility.Collapsed;
+            MenuOverlay.Visibility = Visibility.Collapsed;
         }
 
         private void PingToolsMenuItem_Click(object sender, RoutedEventArgs e)
         {
             ShowPage("PingTools");
-            OverlayMenu.Visibility = Visibility.Collapsed;
+            MenuOverlay.Visibility = Visibility.Collapsed;
         }
 
         private void MiscToolsMenuItem_Click(object sender, RoutedEventArgs e)
         {
             ShowPage("MiscTools");
-            OverlayMenu.Visibility = Visibility.Collapsed;
+            MenuOverlay.Visibility = Visibility.Collapsed;
         }
 
         private void ShowPage(string pageName)
@@ -398,6 +400,120 @@ namespace Ethernet_Tools
             {
                 WindowsPrincipal principal = new WindowsPrincipal(identity);
                 return principal.IsInRole(WindowsBuiltInRole.Administrator);
+            }
+        }
+
+        private bool isDarkTheme = false;
+
+        private void ThemeToggleButton_Click(object sender, RoutedEventArgs e)
+        {
+            isDarkTheme = !isDarkTheme;
+            ApplyTheme();
+        }
+
+        private void ApplyTheme()
+        {
+            if (isDarkTheme)
+            {
+                Resources["BackgroundColor"] = new SolidColorBrush(Color.FromRgb(52, 73, 94));
+                Resources["TextColor"] = new SolidColorBrush(Color.FromRgb(236, 240, 241));
+                Resources["PrimaryColor"] = new SolidColorBrush(Color.FromRgb(41, 128, 185));
+            }
+            else
+            {
+                Resources["BackgroundColor"] = new SolidColorBrush(Color.FromRgb(236, 240, 241));
+                Resources["TextColor"] = new SolidColorBrush(Color.FromRgb(44, 62, 80));
+                Resources["PrimaryColor"] = new SolidColorBrush(Color.FromRgb(52, 152, 219));
+            }
+        }
+
+        private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (NetworkAdapters == null)
+            {
+                return;
+            }
+
+            string searchText = SearchBox.Text.ToLower();
+            var filteredAdapters = NetworkAdapters.Where(adapter => 
+                adapter.Name.ToLower().Contains(searchText) || 
+                adapter.Description.ToLower().Contains(searchText) ||
+                adapter.IPv4Address.ToLower().Contains(searchText)).ToList();
+            
+            NetworkAdaptersDataGrid.ItemsSource = filteredAdapters;
+        }
+
+        private void HelpButton_Click(object sender, RoutedEventArgs e)
+        {
+            var helpWindow = new HelpWindow();
+            helpWindow.Owner = this;
+            helpWindow.ShowDialog();
+        }
+
+        private void ExportConfigButton_Click(object sender, RoutedEventArgs e)
+        {
+            var saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            {
+                Filter = "JSON files (*.json)|*.json",
+                DefaultExt = "json",
+                Title = "Export Configuration"
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                var config = new
+                {
+                    SavedIPAddresses = SavedIPAddresses,
+                    NetworkAdapters = NetworkAdapters.Select(a => new
+                    {
+                        a.Name,
+                        a.Description,
+                        a.IPv4Address,
+                        a.SubnetMask,
+                        a.IsDHCPEnabled
+                    })
+                };
+
+                string json = JsonConvert.SerializeObject(config, Formatting.Indented);
+                File.WriteAllText(saveFileDialog.FileName, json);
+                MessageBox.Show("Configuration exported successfully.", "Export Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        private void ImportConfigButton_Click(object sender, RoutedEventArgs e)
+        {
+            var openFileDialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "JSON files (*.json)|*.json",
+                Title = "Import Configuration"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    string json = File.ReadAllText(openFileDialog.FileName);
+                    var config = JsonConvert.DeserializeObject<dynamic>(json);
+
+                    SavedIPAddresses.Clear();
+                    foreach (var ip in config.SavedIPAddresses)
+                    {
+                        SavedIPAddresses.Add(new IPAddressInfo
+                        {
+                            IPAddress = ip.IPAddress,
+                            SubnetMask = ip.SubnetMask,
+                            Gateway = ip.Gateway,
+                            DNS = ip.DNS.ToObject<string[]>()
+                        });
+                    }
+
+                    MessageBox.Show("Configuration imported successfully.", "Import Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+                    SaveSavedIPAddresses();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error importing configuration: {ex.Message}", "Import Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 

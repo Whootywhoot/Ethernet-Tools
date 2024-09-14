@@ -1,0 +1,21 @@
+<Window x:Class="Ethernet_Tools.HelpWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Help" Height="450" Width="600">
+    <ScrollViewer>
+        <StackPanel Margin="20">
+            <TextBlock Text="Ethernet Tools Help" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
+            <TextBlock Text="Network Adapters:" FontSize="18" FontWeight="Bold"/>
+            <TextBlock Text="• The main grid displays all network adapters on your system." TextWrapping="Wrap" Margin="0,0,0,10"/>
+            <TextBlock Text="• Select an adapter to view more details." TextWrapping="Wrap" Margin="0,0,0,10"/>
+            <TextBlock Text="Quick Change IP:" FontSize="18" FontWeight="Bold"/>
+            <TextBlock Text="• Use the 'Add IP' button to save new IP configurations." TextWrapping="Wrap" Margin="0,0,0,10"/>
+            <TextBlock Text="• Select a saved IP and click 'Quick Change IP' to apply it to the selected adapter." TextWrapping="Wrap" Margin="0,0,0,10"/>
+            <TextBlock Text="• Click 'DHCP' to switch the selected adapter to DHCP mode." TextWrapping="Wrap" Margin="0,0,0,10"/>
+            <TextBlock Text="Search:" FontSize="18" FontWeight="Bold"/>
+            <TextBlock Text="• Use the search box to filter adapters by name, description, or IP address." TextWrapping="Wrap" Margin="0,0,0,10"/>
+            <TextBlock Text="Theme:" FontSize="18" FontWeight="Bold"/>
+            <TextBlock Text="• Toggle between light and dark themes using the theme button in the menu." TextWrapping="Wrap" Margin="0,0,0,10"/>
+        </StackPanel>
+    </ScrollViewer>
+</Window>
