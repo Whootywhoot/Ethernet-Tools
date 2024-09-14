@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ethernet Tools", "Ethernet Tools.csproj", "{FC85A6E8-D245-40FE-B66A-F99FC82301FE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FC85A6E8-D245-40FE-B66A-F99FC82301FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC85A6E8-D245-40FE-B66A-F99FC82301FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC85A6E8-D245-40FE-B66A-F99FC82301FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC85A6E8-D245-40FE-B66A-F99FC82301FE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {066BA05E-8A66-4541-87F0-ACA704C36937}
+	EndGlobalSection
+EndGlobal

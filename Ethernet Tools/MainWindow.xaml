@@ -1,0 +1,148 @@
+﻿<Window x:Class="Ethernet_Tools.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Ethernet_Tools"
+        mc:Ignorable="d"
+        Title="Network Tools" Height="600" Width="800"
+        WindowStartupLocation="CenterScreen"
+        Background="#FFecf0f1">
+
+    <Window.Resources>
+        <!-- Color Scheme -->
+        <SolidColorBrush x:Key="PrimaryColor" Color="#FF3498db"/>
+        <SolidColorBrush x:Key="SecondaryColor" Color="#FF2ecc71"/>
+        <SolidColorBrush x:Key="BackgroundColor" Color="#FFecf0f1"/>
+        <SolidColorBrush x:Key="TextColor" Color="#FF2c3e50"/>
+        <SolidColorBrush x:Key="AccentColor" Color="#FFe74c3c"/>
+        <!-- Styles -->
+        <Style x:Key="MenuButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource PrimaryColor}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource SecondaryColor}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <local:BoolToOnOffConverter x:Key="BoolToOnOffConverter"/>
+        <local:ArrayToStringConverter x:Key="ArrayToStringConverter"/>
+    </Window.Resources>
+
+    <Grid>
+        <!-- Ethernet Tools Page -->
+        <Grid x:Name="EthernetToolsPage" Visibility="Visible">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <DataGrid x:Name="NetworkAdaptersDataGrid" AutoGenerateColumns="False" Margin="10"
+                          ItemsSource="{Binding NetworkAdapters}" SelectedItem="{Binding SelectedAdapter, Mode=TwoWay}"
+                          SelectionMode="Single">
+                    <DataGrid.Columns>
+                        
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="*"/>
+                        <DataGridTextColumn Header="IPv4 Address" Binding="{Binding IPv4Address}" Width="*"/>
+                        <DataGridTextColumn Header="DHCP" Binding="{Binding IsDHCPEnabled, Converter={StaticResource BoolToOnOffConverter}}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <StackPanel Grid.Column="1" Margin="10" Width="250">
+                    <TextBlock Text="Selected Adapter Details" FontWeight="Bold" FontSize="16"/>
+                    <TextBlock Text="Name:" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding SelectedAdapter.Name, TargetNullValue='N/A'}"/>
+                    <TextBlock Text="Description:" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding SelectedAdapter.Description, TargetNullValue='N/A'}"/>
+                    <TextBlock Text="Status:" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding SelectedAdapter.Status, TargetNullValue='N/A'}"/>
+                    <TextBlock Text="IPv4 Address:" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding SelectedAdapter.IPv4Address, TargetNullValue='N/A'}"/>
+                    <TextBlock Text="MAC Address:" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding SelectedAdapter.MACAddress, TargetNullValue='N/A'}"/>
+                    <TextBlock Text="Subnet Mask:" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding SelectedAdapter.SubnetMask, TargetNullValue='N/A'}"/>
+                    <TextBlock Text="DNS Servers:" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding SelectedAdapter.DNSServers, Converter={StaticResource ArrayToStringConverter}, TargetNullValue='N/A'}"/>
+                    <TextBlock Text="DHCP:" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding SelectedAdapter.IsDHCPEnabled, Converter={StaticResource BoolToOnOffConverter}, TargetNullValue='N/A'}"/>
+                    
+                    <TextBlock Text="Saved IP Addresses" FontWeight="Bold" FontSize="16" Margin="0,20,0,0"/>
+                    <ListBox x:Name="SavedIPListBox" Height="100" Margin="0,5,0,5">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding IPAddress}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Add IP" Width="80" Margin="0,0,5,0" Click="AddIPButton_Click"/>
+                        <Button Content="Remove IP" Width="80" Margin="5,0,0,0" Click="RemoveIPButton_Click"/>
+                    </StackPanel>
+                    <Button Content="Quick Change IP" Width="165" Margin="0,10,0,0" Click="QuickChangeIPButton_Click"/>
+                    <Button Content="DHCP" Width="165" Margin="0,10,0,0" Click="DHCPButton_Click"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+
+        <!-- Ping Tools Page -->
+        <Grid x:Name="PingToolsPage" Visibility="Collapsed">
+            <!-- Content for Ping Tools Page -->
+            <TextBlock Text="Ping Tools Page" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Grid>
+
+        <!-- Misc Tools Page -->
+        <Grid x:Name="MiscToolsPage" Visibility="Collapsed">
+            <!-- Content for Misc Tools Page -->
+            <TextBlock Text="Misc Tools Page" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Grid>
+
+        <!-- Overlay Menu -->
+        <Grid x:Name="OverlayMenu" Background="#AA000000" Visibility="Collapsed">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <!-- Menu Content -->
+            <StackPanel Background="{StaticResource PrimaryColor}" VerticalAlignment="Stretch">
+                <!-- Menu Items -->
+                <Button Style="{StaticResource MenuButtonStyle}" Click="EthernetToolsMenuItem_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="🖧" FontSize="20"/>
+                        <TextBlock Text=" Ethernet Tools" Margin="10,0,0,0"/>
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource MenuButtonStyle}" Click="PingToolsMenuItem_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="💻" FontSize="20"/>
+                        <TextBlock Text=" Ping Tools" Margin="10,0,0,0"/>
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource MenuButtonStyle}" Click="MiscToolsMenuItem_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="🔧" FontSize="20"/>
+                        <TextBlock Text=" Misc Tools" Margin="10,0,0,0"/>
+                    </StackPanel>
+                </Button>
+                <!-- Close Menu Button -->
+                <Button Content="Close Menu" Style="{StaticResource MenuButtonStyle}" Margin="0,20,0,0" Click="CloseMenuButton_Click"/>
+            </StackPanel>
+            <!-- Transparent Area to Close Menu -->
+            <Grid Grid.Column="1" Background="Transparent" MouseDown="OverlayMenuBackground_MouseDown"/>
+        </Grid>
+    </Grid>
+</Window>
